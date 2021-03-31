@@ -11,7 +11,7 @@ public class CategoriaDao implements ICadastro {
 
 	@Override
 	public Object Create(Object novo) {
-		Categoria item = (Categoria) novo;
+		Categoria item = (Categoria) novo; 
 		if (Find(item.getNome()) != null) {
 			System.out.println("Erro ao adicionar. Já existe um registro com nome " + item.getNome());
 		} else {

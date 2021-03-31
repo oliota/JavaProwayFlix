@@ -76,7 +76,7 @@ public class PerfilDao extends Banco implements ICadastro {
 	}
 
 	@Override
-	public boolean Delete(Object item) {
+	public boolean Delete(Object item) { 
 		Perfil deletado = (Perfil) item;
 		Perfil busca = (Perfil) Find(deletado.getNome());
 		if (busca != null) {
