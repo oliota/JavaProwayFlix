@@ -34,7 +34,7 @@ public class PerfilDao extends Banco implements ICadastro {
 		try {
 			while (resultSet.next()) {
 				if (resultSet.isFirst()) {
-					System.out.println("\n\n====== Listar categorias ========");
+					System.out.println("\n\n====== Listar " + TABELA + " ========");
 				}
 				Perfil item = (Perfil) Preencher(resultSet);
 				perfis.add(item);

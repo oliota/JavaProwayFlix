@@ -1,2 +1,2 @@
 # JavaProwayFlix
-ProwayFlix desenvolvido em Java(Console)
+ProwayFlix desenvolvido em Java(Console).
