@@ -34,7 +34,7 @@ public class PerfilDao extends Banco implements ICadastro {
 		try {
 			while (resultSet.next()) {
 				if (resultSet.isFirst()) {
-					System.out.println("\n\n====== Listar "+TABELA+" ========");
+					System.out.println("\n\n====== Listar " + TABELA + " ========");
 				}
 				Perfil item = (Perfil) Preencher(resultSet);
 				perfis.add(item);
@@ -76,7 +76,7 @@ public class PerfilDao extends Banco implements ICadastro {
 	}
 
 	@Override
-	public boolean Delete(Object item) { 
+	public boolean Delete(Object item) {
 		Perfil deletado = (Perfil) item;
 		Perfil busca = (Perfil) Find(deletado.getNome());
 		if (busca != null) {

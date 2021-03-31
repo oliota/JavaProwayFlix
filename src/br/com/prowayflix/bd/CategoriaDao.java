@@ -11,7 +11,7 @@ public class CategoriaDao implements ICadastro {
 
 	@Override
 	public Object Create(Object novo) {
-		Categoria item = (Categoria) novo; 
+		Categoria item = (Categoria) novo;
 		if (Find(item.getNome()) != null) {
 			System.out.println("Erro ao adicionar. Já existe um registro com nome " + item.getNome());
 		} else {
@@ -28,7 +28,7 @@ public class CategoriaDao implements ICadastro {
 		if (Repositorio.Categorias.size() == 0) {
 			System.out.println("Não há itens para exibir");
 		} else {
-			System.out.println("\n\n====== Listar "+TABELA+" ========");
+			System.out.println("\n\n====== Listar " + TABELA + " ========");
 			for (int i = 0; i < Repositorio.Categorias.size(); i++) {
 				Repositorio.Categorias.get(i).ExibirDetalhes();
 			}
@@ -46,7 +46,7 @@ public class CategoriaDao implements ICadastro {
 			System.out.println("Erro ao editar. Nada foi encontrado com nome " + original.getNome());
 		} else if (Find(atualizado.getNome()) != null) {
 			System.out.println("Erro ao editar. Já existe um registro com nome " + atualizado.getNome());
-		}else {
+		} else {
 			System.out.println("====== Antes ========");
 			original.ExibirDetalhes();
 			System.out.println("====== Depois ========");
