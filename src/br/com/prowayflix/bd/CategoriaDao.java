@@ -28,7 +28,7 @@ public class CategoriaDao implements ICadastro {
 		if (Repositorio.Categorias.size() == 0) {
 			System.out.println("Não há itens para exibir");
 		} else {
-			System.out.println("\n\n====== Listar categorias ========");
+			System.out.println("\n\n====== Listar "+TABELA+" ========");
 			for (int i = 0; i < Repositorio.Categorias.size(); i++) {
 				Repositorio.Categorias.get(i).ExibirDetalhes();
 			}

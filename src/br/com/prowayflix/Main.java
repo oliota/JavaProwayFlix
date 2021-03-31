@@ -15,7 +15,7 @@ public class Main {
 
 		PerfilDao perfilDao = new PerfilDao();
 
-		perfilDao.Create(new Perfil("Teste2"));
+		perfilDao.Create(new Perfil("Testex"));
 		perfilDao.ReadAll(null);
 		
 
@@ -29,8 +29,7 @@ public class Main {
 
 		perfilDao.ReadAll(null);
 
-		if (true)
-			return;
+		
 		CategoriaDao categoriaDao = new CategoriaDao();
 		categoriaDao.Create(new Categoria("Terror"));
 		categoriaDao.Create(new Categoria("Drama"));
