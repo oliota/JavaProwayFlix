@@ -1,5 +1,6 @@
 package br.com.prowayflix.bd;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,10 +19,11 @@ public class PerfilDao extends Banco implements ICadastro {
 		if (Find(item.getNome()) != null) {
 			System.out.println("Erro ao adicionar. Já existe registro com nome " + item.getNome());
 		} else {
-			Repositorio.ExecutarComandoBD("INSERT INTO " + TABELA + " (nome) VALUES ('" + item.getNome() + "');");
-			item = (Perfil) Find(item.getNome());
-			item.ExibirDetalhes();
-			System.out.println("Salvo com sucesso!");
+			if(Executar(item, "INSERT INTO " + TABELA + " (nome) VALUES (?)")) {
+				item = (Perfil) Find(item.getNome());
+				item.ExibirDetalhes();
+				System.out.println("Salvo com sucesso!");
+			}   
 		}
 		return item;
 	}
@@ -30,26 +32,26 @@ public class PerfilDao extends Banco implements ICadastro {
 	public Object ReadAll(Object pai) {
 		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA);
 
-		ArrayList<Perfil> perfis = new ArrayList<>();
+		ArrayList<Perfil> lista = new ArrayList<>();
 		try {
 			while (resultSet.next()) {
 				if (resultSet.isFirst()) {
 					System.out.println("\n\n====== Listar " + TABELA + " ========");
 				}
 				Perfil item = (Perfil) Preencher(resultSet);
-				perfis.add(item);
+				lista.add(item);
 				item.ExibirDetalhes();
 
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-		if (perfis.size() == 0) {
+		if (lista.size() == 0) {
 			System.out.println("Não há itens para exibir");
 		} else {
-			System.out.println("====== Itens:" + perfis.size() + " ========\n\n");
+			System.out.println("====== Itens:" + lista.size() + " ========\n\n");
 		}
-		return perfis;
+		return lista;
 	}
 
 	@Override
@@ -66,11 +68,12 @@ public class PerfilDao extends Banco implements ICadastro {
 			System.out.println("====== Antes ========");
 			original.ExibirDetalhes();
 			System.out.println("====== Depois ========");
-			Repositorio.ExecutarComandoBD("UPDATE " + TABELA + " SET nome='" + atualizado.getNome() + "'"
-					+ " WHERE Nome='" + original.getNome() + "'");
-			original = (Perfil) Find(atualizado.getNome());
-			original.ExibirDetalhes();
-			System.out.println("Atualizado com sucesso!");
+			
+			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? "+ " WHERE Nome='" + original.getNome() + "'")) {
+				original = (Perfil) Find(atualizado.getNome());
+				original.ExibirDetalhes();
+				System.out.println("Atualizado com sucesso!");
+			}  
 		}
 		return original;
 	}
@@ -119,6 +122,21 @@ public class PerfilDao extends Banco implements ICadastro {
 			e.printStackTrace();
 		}
 		return item;
+	}
+
+	@Override
+	public boolean Executar(Object objeto, String comando) {
+		Perfil item = (Perfil) objeto;
+		try {
+			PreparedStatement preparedStmt;
+			preparedStmt = Repositorio.con.prepareStatement(comando);
+			preparedStmt.setString(1, item.getNome()); 
+			Repositorio.Executar(preparedStmt); 
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

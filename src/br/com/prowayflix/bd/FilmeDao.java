@@ -8,38 +8,39 @@ import java.util.ArrayList;
 import br.com.prowayflix.interfaces.ICadastro;
 import br.com.prowayflix.model.Categoria;
 import br.com.prowayflix.model.Filme;
-import br.com.prowayflix.model.Perfil;
 
-public class CategoriaDao extends Banco implements ICadastro {
+public class FilmeDao extends Banco implements ICadastro {
 
-	private final String TABELA = "Categoria";
+	private final String TABELA = "Filme";
 
 	@Override
 	public Object Create(Object novo) {
-		Categoria item = (Categoria) novo;
+		Filme item = (Filme) novo;
 		if (Find(item.getNome()) != null) {
 			System.out.println("Erro ao adicionar. Já existe registro com nome " + item.getNome());
-		} else {
-			if(Executar(item, "INSERT INTO " + TABELA + " (nome) VALUES (?)")) {
-				item = (Categoria) Find(item.getNome());
+		} else {  
+			if(Executar(item, "INSERT INTO " + TABELA + " (nome,ano,sinopse,categoriaid) VALUES (?,?,?,?)")) {
+				item = (Filme) Find(item.getNome());
 				item.ExibirDetalhes();
 				System.out.println("Salvo com sucesso!");
-			}   
+			}  
 		}
 		return item;
 	}
 
 	@Override
 	public Object ReadAll(Object pai) {
-		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA);
+		ResultSet resultSet = Repositorio.ConsultarBD("SELECT f.idfilme,f.nome filme, f.ano,f.sinopse,c.idcategoria,c.nome categoria "
+				+ " from " + TABELA+" f "
+				+ " inner join Categoria c on c.idcategoria = f.categoriaid");
 
-		ArrayList<Categoria> lista = new ArrayList<>();
+		ArrayList<Filme> lista = new ArrayList<>();
 		try {
 			while (resultSet.next()) {
 				if (resultSet.isFirst()) {
 					System.out.println("\n\n====== Listar " + TABELA + " ========");
 				}
-				Categoria item = (Categoria) Preencher(resultSet);
+				Filme item = (Filme) Preencher(resultSet);
 				lista.add(item);
 				item.ExibirDetalhes();
 
@@ -57,9 +58,9 @@ public class CategoriaDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Update(Object atual, Object editado) {
-		Categoria original = (Categoria) atual;
-		Categoria atualizado = (Categoria) editado;
-		original = (Categoria) Find(original.getNome());
+		Filme original = (Filme) atual;
+		Filme atualizado = (Filme) editado;
+		original = (Filme) Find(original.getNome());
 		if (original == null) {
 			System.out.println("Erro ao editar. Nada foi encontrado com nome " + original.getNome());
 		} else if (Find(atualizado.getNome()) != null) {
@@ -70,19 +71,21 @@ public class CategoriaDao extends Banco implements ICadastro {
 			original.ExibirDetalhes();
 			System.out.println("====== Depois ========");
 			
-			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? "+ " WHERE Nome='" + original.getNome() + "'")) {
-				original = (Categoria) Find(atualizado.getNome());
+			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? , ano=?, sinopse=?, categoriaid=? "+ " WHERE Nome='" + original.getNome() + "'")) {
+				original = (Filme) Find(atualizado.getNome());
 				original.ExibirDetalhes();
 				System.out.println("Atualizado com sucesso!");
-			}    
+			}  
+			
+			
 		}
 		return original;
 	}
 
 	@Override
 	public boolean Delete(Object item) {
-		Categoria deletado = (Categoria) item;
-		Categoria busca = (Categoria) Find(deletado.getNome());
+		Filme deletado = (Filme) item;
+		Filme busca = (Filme) Find(deletado.getNome());
 		if (busca != null) {
 			Repositorio.ExecutarComandoBD("DELETE FROM " + TABELA + " WHERE nome='" + busca.getNome() + "'");
 			System.out.println("Item deletado com sucesso!");
@@ -96,12 +99,15 @@ public class CategoriaDao extends Banco implements ICadastro {
 	@Override
 	public Object Find(Object chave) {
 		String nome = (String) chave;
-		Categoria item = null;
-		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA + " WHERE Nome='" + nome + "'");
+		Filme item = null;
+		ResultSet resultSet = Repositorio
+				.ConsultarBD("SELECT f.idfilme,f.nome filme, f.ano,f.sinopse,c.idcategoria,c.nome categoria" + " from "
+						+ TABELA + " f " + " inner join Categoria c on c.idcategoria = f.categoriaid" + " WHERE f.nome='"
+						+ nome + "'");
 
 		try {
 			while (resultSet.next()) {
-				item = (Categoria) Preencher(resultSet);
+				item = (Filme) Preencher(resultSet);
 				resultSet.isFirst();
 				break;
 			}
@@ -115,10 +121,16 @@ public class CategoriaDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Preencher(ResultSet resultSet) {
-		Categoria item = new Categoria();
+		Filme item = new Filme();
+		item.setCategoria(new Categoria());
 		try {
-			item.setIdCategoria(resultSet.getInt(resultSet.findColumn("idcategoria")));
-			item.setNome(resultSet.getString(resultSet.findColumn("nome")));
+			item.setIdFilme(resultSet.getInt(resultSet.findColumn("idfilme")));
+			item.setNome(resultSet.getString(resultSet.findColumn("filme")));
+			item.setAno(resultSet.getInt(resultSet.findColumn("ano")));
+			item.setSinopse(resultSet.getString(resultSet.findColumn("sinopse")));
+			item.getCategoria().setIdCategoria(resultSet.getInt(resultSet.findColumn("idcategoria")));
+			item.getCategoria().setNome(resultSet.getString(resultSet.findColumn("categoria")));
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -126,12 +138,16 @@ public class CategoriaDao extends Banco implements ICadastro {
 	}
 
 	@Override
-	public boolean Executar(Object objeto, String comando) {
-		Categoria item = (Categoria) objeto;
+	public boolean Executar(Object objeto,String comando) {
+
+		Filme item = (Filme) objeto;
 		try {
 			PreparedStatement preparedStmt;
 			preparedStmt = Repositorio.con.prepareStatement(comando);
-			preparedStmt.setString(1, item.getNome()); 
+			preparedStmt.setString(1, item.getNome());
+			preparedStmt.setInt(2, item.getAno());
+			preparedStmt.setString(3, item.getSinopse());
+			preparedStmt.setInt(4, item.getCategoria().getIdCategoria()); 
 			Repositorio.Executar(preparedStmt); 
 			return true;
 		} catch (SQLException e) {

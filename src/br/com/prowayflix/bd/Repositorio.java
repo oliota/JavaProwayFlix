@@ -2,6 +2,7 @@ package br.com.prowayflix.bd;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -76,6 +77,16 @@ public class Repositorio {
 		try {
 			statement = con.createStatement();
 			statement.executeUpdate(sql);
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	static public boolean Executar(PreparedStatement preparedStmt) { 
+		try { 
+			preparedStmt.execute();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
