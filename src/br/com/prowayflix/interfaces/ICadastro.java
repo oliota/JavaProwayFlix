@@ -10,5 +10,6 @@ public interface ICadastro {
 
 	public Object Find(Object chave);
 	public Object Preencher(ResultSet resultSet);
+	public boolean Executar(Object objeto,String comando);
 
 }

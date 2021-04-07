@@ -1,6 +1,8 @@
 package br.com.prowayflix.model;
 
-public class Filme {
+import br.com.prowayflix.interfaces.IDetalhe;
+
+public class Filme implements IDetalhe {
 	private int IdFilme;
 	private Categoria Categoria;
 	private String Nome;
@@ -63,6 +65,13 @@ public class Filme {
 
 	public void setSinopse(String sinopse) {
 		Sinopse = sinopse;
+	}
+
+	@Override
+	public void ExibirDetalhes() {
+		System.out.println("Id: " + getIdFilme() + " Filme:"
+				+ getNome());
+		
 	}
 
 }
