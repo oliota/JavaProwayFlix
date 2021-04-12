@@ -20,7 +20,7 @@ public class PerfilDao extends Banco implements ICadastro {
 			System.out.println("Erro ao adicionar. Já existe registro com nome " + item.getNome());
 		} else {
 			if(Executar(item, "INSERT INTO " + TABELA + " (nome) VALUES (?)")) {
-				item = (Perfil) Find(item.getNome());
+				item = (Perfil) Find(Limpar(item.getNome()));
 				item.ExibirDetalhes();
 				System.out.println("Salvo com sucesso!");
 			}   

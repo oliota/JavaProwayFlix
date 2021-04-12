@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-	static Scanner scan = new Scanner(System.in);
+
+	static Scanner scan = new Scanner(System.in).useDelimiter("\n");
+	static Scanner scanNumber = new Scanner(System.in);
 	static String resposta;
 	private ArrayList<String> Opcoes;
 
@@ -23,6 +25,11 @@ public class Menu {
 
 	public void setOpcoes(ArrayList<String> opcoes) {
 		this.Opcoes = opcoes;
+	}
+	
+	public void CapturarEscolha() {
+		System.out.println("Escolha uma opção da lista");
+		resposta = scan.next().replaceAll("\r","");
 	}
 
 }

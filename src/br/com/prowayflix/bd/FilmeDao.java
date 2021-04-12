@@ -20,7 +20,7 @@ public class FilmeDao extends Banco implements ICadastro {
 			System.out.println("Erro ao adicionar. Já existe registro com nome " + item.getNome());
 		} else {  
 			if(Executar(item, "INSERT INTO " + TABELA + " (nome,ano,sinopse,categoriaid) VALUES (?,?,?,?)")) {
-				item = (Filme) Find(item.getNome());
+				item = (Filme) Find(Limpar(item.getNome()));
 				item.ExibirDetalhes();
 				System.out.println("Salvo com sucesso!");
 			}  
@@ -98,7 +98,7 @@ public class FilmeDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Find(Object chave) {
-		String nome = (String) chave;
+		String nome = Limpar((String) chave);
 		Filme item = null;
 		ResultSet resultSet = Repositorio
 				.ConsultarBD("SELECT f.idfilme,f.nome filme, f.ano,f.sinopse,c.idcategoria,c.nome categoria" + " from "
@@ -144,9 +144,9 @@ public class FilmeDao extends Banco implements ICadastro {
 		try {
 			PreparedStatement preparedStmt;
 			preparedStmt = Repositorio.con.prepareStatement(comando);
-			preparedStmt.setString(1, item.getNome());
+			preparedStmt.setString(1, Limpar(item.getNome()));
 			preparedStmt.setInt(2, item.getAno());
-			preparedStmt.setString(3, item.getSinopse());
+			preparedStmt.setString(3, Limpar(item.getSinopse()));
 			preparedStmt.setInt(4, item.getCategoria().getIdCategoria()); 
 			Repositorio.Executar(preparedStmt); 
 			return true;

@@ -18,7 +18,8 @@ public class PrincipalMenu  extends Menu implements IMenu {
 			ListarOpcoes();
 			CapturarEscolha();
 			System.out.println("\n\n==============================");
-		} while (!resposta.equalsIgnoreCase("0"));
+		} while (!resposta.equalsIgnoreCase("0")); 
+		resposta="";
 	}
 
 	@Override
@@ -30,8 +31,7 @@ public class PrincipalMenu  extends Menu implements IMenu {
 
 	@Override
 	public void CapturarEscolha() {
-		System.out.println("Escolha uma opção da lista");
-		resposta = scan.next();
+		super.CapturarEscolha();
 		switch (resposta) {
 		case "0":
 			System.out.println("Escolheu SAIR");
@@ -46,6 +46,8 @@ public class PrincipalMenu  extends Menu implements IMenu {
 			break;
 		case "3":
 			System.out.println("Escolheu FILMES");
+			FilmeMenu filmeMenu = new FilmeMenu();
+			filmeMenu.ExibirMenu();
 			break;
 		default:
 			System.out.println("Opção invalida");
