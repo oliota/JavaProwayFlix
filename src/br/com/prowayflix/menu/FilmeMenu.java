@@ -1,15 +1,18 @@
 package br.com.prowayflix.menu;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import br.com.prowayflix.bd.PerfilDao;
+import br.com.prowayflix.bd.CategoriaDao;
+import br.com.prowayflix.bd.FilmeDao;
 import br.com.prowayflix.interfaces.IMenu;
-import br.com.prowayflix.model.Perfil;
+import br.com.prowayflix.model.Categoria;
+import br.com.prowayflix.model.Filme; 
 
-public class PerfilMenu extends Menu implements IMenu {
+public class FilmeMenu extends Menu implements IMenu {
 
-	static PerfilDao perfilDao = new PerfilDao();
+	static FilmeDao filmeDao = new FilmeDao();
+	static CategoriaDao categoriaDao= new CategoriaDao();
+	static String titulo = "Filme";
 
 	@Override
 	public void ExibirMenu() {
@@ -31,36 +34,40 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public void CapturarEscolha() {
-		super.CapturarEscolha();
+		super.CapturarEscolha(); 
 		switch (resposta) {
 		case "0":
 			System.out.println("Escolheu SAIR");
 			break;
 		case "1":
-			perfilDao.ReadAll(null);
+			filmeDao.ReadAll(null);
 			break;
 		case "2":
 			System.out.println("Escolheu ADICIONAR");
-			Perfil novo = (Perfil) Cadastro("completo");
+			Filme novo = (Filme) Cadastro("completo");
+			  categoriaDao= new CategoriaDao(); 
+			novo.setCategoria((Categoria) categoriaDao.Find("Ação"));
 			if (Validar(novo, "completo")) {
-				perfilDao.Create(novo);
+				filmeDao.Create(novo);
 			}
 			break;
 		case "3":
 			System.out.println("Escolheu EDITAR");
-			Perfil original = (Perfil) Cadastro("busca");
+			Filme original = (Filme) Cadastro("busca");
 			if (Validar(original, "busca")) {
-				Perfil editado = (Perfil) Cadastro("completo");
+				Filme editado = (Filme) Cadastro("completo");
+				  categoriaDao= new CategoriaDao(); 
+				  editado.setCategoria((Categoria) categoriaDao.Find("Ação"));
 				if (Validar(editado, "completo")) {
-					perfilDao.Update(original, editado);
+					filmeDao.Update(original, editado);
 				}
 			}
 			break;
 		case "4":
 			System.out.println("Escolheu DELETAR");
-			Perfil deletar = (Perfil) Cadastro("busca");
+			Filme deletar = (Filme) Cadastro("busca");
 			if (Validar(deletar, "busca")) {
-				perfilDao.Delete(deletar);
+				filmeDao.Delete(deletar);
 			}
 			break;
 		default:
@@ -71,18 +78,25 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public Object Cadastro(String tipo) {
-		Perfil item = new Perfil(); 
+		Filme item = new Filme(); 
 		System.out.println("=============================");
 		switch (tipo) {
 		case "completo":
 			System.out.println("Preencha as informações para cadastrar novos valores");
-			System.out.println("Informe o nome do perfil:");
+			System.out.println("Informe o nome do "+titulo);
 			item.setNome(scan.next());
+
+			System.out.println("Informe o ano do "+titulo);
+			item.setAno(scanNumber.nextInt()); 
+
+			System.out.println("Informe o nome do "+titulo);
+			item.setSinopse(scan.next());
+
 			break;
 		case "busca":
 
 			System.out.println("Preencha as informações para realizar a busca na base");
-			System.out.println("Informe o nome do perfil:");
+			System.out.println("Informe o nome do "+titulo);
 			item.setNome(scan.next());
 			break;
 		}
@@ -91,11 +105,20 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public boolean Validar(Object objeto, String tipo) {
-		Perfil item = (Perfil) objeto;
+		Filme item = (Filme) objeto;
 		StringBuilder sbErros = new StringBuilder();
 		switch (tipo) {
 		case "completo":
-			if (item.getNome().isEmpty() || item.getNome().isBlank())
+			if (item.getNome()==null || item.getNome().isEmpty() || item.getNome().isBlank())
+				sbErros.append("\nNome não pode ficar em branco"); 
+			 
+			if (item.getAno()<1800)
+				sbErros.append("\nAno não pode ser menor que 1800");
+			
+			if (item.getAno()>2021)
+				sbErros.append("\nAno não pode ser maior que 2021");
+			
+			if (item.getSinopse()==null || item.getSinopse().isEmpty() || item.getSinopse().isBlank())
 				sbErros.append("\nNome não pode ficar em branco");
 			break;
 		case "busca":
@@ -113,3 +136,4 @@ public class PerfilMenu extends Menu implements IMenu {
 	}
 
 }
+

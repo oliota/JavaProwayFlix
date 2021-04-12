@@ -8,5 +8,8 @@ public class Banco {
 			Repositorio.ConectarBd("postgres");
 		}
 	}
+	public String Limpar(String texto) { 
+		return texto.replaceAll("\r", "");
+	}
 
 }
