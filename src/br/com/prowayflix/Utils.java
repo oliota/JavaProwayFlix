@@ -10,5 +10,7 @@ public class Utils {
 		String resposta=scan.next();
 		return resposta.equalsIgnoreCase("S"); 
 	}
+	
+	
 
 }

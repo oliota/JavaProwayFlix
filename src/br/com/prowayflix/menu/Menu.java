@@ -3,7 +3,9 @@ package br.com.prowayflix.menu;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Menu {
+import br.com.prowayflix.Utils;
+
+public class Menu extends Utils {
 
 	static Scanner scan = new Scanner(System.in).useDelimiter("\n");
 	static Scanner scanNumber = new Scanner(System.in);
@@ -30,6 +32,9 @@ public class Menu {
 	public void CapturarEscolha() {
 		System.out.println("Escolha uma opção da lista");
 		resposta = scan.next().replaceAll("\r","");
+	}
+	public static String Limpar(String texto) {
+		return texto.replaceAll("\r", ""); 
 	}
 
 }

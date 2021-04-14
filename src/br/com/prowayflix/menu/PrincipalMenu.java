@@ -13,6 +13,7 @@ public class PrincipalMenu  extends Menu implements IMenu {
 		getOpcoes().add("1 - Perfis");
 		getOpcoes().add("2 - Categorias");
 		getOpcoes().add("3 - Filmes");
+		getOpcoes().add("4 - Series");
 		do {
 			System.out.println("\n\n==============================");
 			ListarOpcoes();
@@ -38,16 +39,19 @@ public class PrincipalMenu  extends Menu implements IMenu {
 			break;
 		case "1":
 			System.out.println("Escolheu PERFIS");
-			PerfilMenu perfilMenu = new PerfilMenu();
-			perfilMenu.ExibirMenu();
+			new PerfilMenu().ExibirMenu();
 			break;
 		case "2":
 			System.out.println("Escolheu CATEGORIAS");
+			new CategoriaMenu().ExibirMenu();
 			break;
 		case "3":
 			System.out.println("Escolheu FILMES");
-			FilmeMenu filmeMenu = new FilmeMenu();
-			filmeMenu.ExibirMenu();
+			new FilmeMenu().ExibirMenu();
+			break;
+		case "4":
+			System.out.println("Escolheu SERIES");
+			new SerieMenu().ExibirMenu();
 			break;
 		default:
 			System.out.println("Opção invalida");

@@ -1,24 +1,37 @@
 package br.com.prowayflix.menu;
- 
 
-import br.com.prowayflix.bd.PerfilDao;
+import br.com.prowayflix.bd.CategoriaDao;
+import br.com.prowayflix.bd.FilmeDao;
+import br.com.prowayflix.bd.TemporadaDao;
 import br.com.prowayflix.interfaces.IMenu;
-import br.com.prowayflix.model.Perfil;
+import br.com.prowayflix.model.Categoria;
+import br.com.prowayflix.model.Filme;
+import br.com.prowayflix.model.Serie;
+import br.com.prowayflix.model.Temporada;
 
-public class PerfilMenu extends Menu implements IMenu {
+public class TemporadaMenu extends Menu implements IMenu {
+ 
+	static TemporadaDao temporadaDao = new TemporadaDao(); 
+	static String titulo = "Temporada";
+	private Serie pai;
+	
+	public TemporadaMenu() {
+	}
 
-	static PerfilDao perfilDao = new PerfilDao();
-	static String titulo = "Perfil";
+	public TemporadaMenu(Serie pai) {
+		setPai(pai);
+		temporadaDao.setSerie(pai);
+	}
 
 	@Override
 	public void ExibirMenu() {
 		do {
-			System.out.println("\n\n======= menu "+titulo+" ===============");
+			System.out.println("\n\n======= menu "+titulo+" - Serie - "+pai.getNome()+"  ===============");
 			ListarOpcoes();
 			CapturarEscolha();
 			System.out.println("\n\n==============================");
 		} while (!resposta.equalsIgnoreCase("0"));
-		resposta="";
+		resposta = "";
 	}
 
 	@Override
@@ -36,30 +49,31 @@ public class PerfilMenu extends Menu implements IMenu {
 			System.out.println("Escolheu SAIR");
 			break;
 		case "1":
-			perfilDao.ReadAll(null);
+			temporadaDao.ReadAll(pai);
 			break;
 		case "2":
 			System.out.println("Escolheu ADICIONAR");
-			Perfil novo = (Perfil) Cadastro("completo");
+			Temporada novo = (Temporada) Cadastro("completo");
+
 			if (Validar(novo, "completo")) {
-				perfilDao.Create(novo);
+				temporadaDao.Create(novo);
 			}
 			break;
 		case "3":
 			System.out.println("Escolheu EDITAR");
-			Perfil original = (Perfil) Cadastro("busca");
+			Temporada original = (Temporada) Cadastro("busca");
 			if (Validar(original, "busca")) {
-				Perfil editado = (Perfil) Cadastro("completo");
+				Temporada editado = (Temporada) Cadastro("completo");
 				if (Validar(editado, "completo")) {
-					perfilDao.Update(original, editado);
+					temporadaDao.Update(original, editado);
 				}
 			}
 			break;
 		case "4":
 			System.out.println("Escolheu DELETAR");
-			Perfil deletar = (Perfil) Cadastro("busca");
+			Filme deletar = (Filme) Cadastro("busca");
 			if (Validar(deletar, "busca")) {
-				perfilDao.Delete(deletar);
+				temporadaDao.Delete(deletar);
 			}
 			break;
 		default:
@@ -70,19 +84,22 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public Object Cadastro(String tipo) {
-		Perfil item = new Perfil(); 
+		Temporada item = new Temporada();
 		System.out.println("=============================");
 		switch (tipo) {
 		case "completo":
 			System.out.println("Preencha as informações para cadastrar novos valores");
-			System.out.println("Informe o nome do "+titulo);
-			item.setNome(Limpar(scan.next()));
+			System.out.println("Informe o sequencial do " + titulo);
+			item.setSequencial(scanNumber.nextInt()); 
+			item.setSerie(pai);
+
 			break;
 		case "busca":
 
 			System.out.println("Preencha as informações para realizar a busca na base");
-			System.out.println("Informe o nome do "+titulo);
-			item.setNome(Limpar(scan.next()));
+			System.out.println("Informe o sequencial do " + titulo);
+			item.setSequencial(scanNumber.nextInt()); 
+			item.setSerie(pai);
 			break;
 		}
 		return item;
@@ -90,16 +107,17 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public boolean Validar(Object objeto, String tipo) {
-		Perfil item = (Perfil) objeto;
+		Temporada item = (Temporada) objeto;
 		StringBuilder sbErros = new StringBuilder();
 		switch (tipo) {
-		case "completo":
-			if (item.getNome().isEmpty() || item.getNome().isBlank())
-				sbErros.append("\nNome não pode ficar em branco");
+		case "completo": 
+			if (item.getSequencial() <0)
+				sbErros.append("\nAno não pode ser menor que zero"); 
+			
 			break;
 		case "busca":
-			if (item.getNome().isEmpty() || item.getNome().isBlank())
-				sbErros.append("\nNome não pode ficar em branco");
+			if (item.getSequencial() <0)
+				sbErros.append("\nAno não pode ser menor que zero"); 
 			break;
 		}
 		if (!sbErros.toString().isEmpty()) {
@@ -111,4 +129,13 @@ public class PerfilMenu extends Menu implements IMenu {
 		return true;
 	}
 
+	public Serie getPai() {
+		return pai;
+	}
+
+	public void setPai(Serie pai) {
+		this.pai = pai;
+	}
+
 }
+

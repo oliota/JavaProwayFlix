@@ -1,21 +1,28 @@
 package br.com.prowayflix.menu;
 
+import java.util.ArrayList;
+
 import br.com.prowayflix.bd.CategoriaDao;
-import br.com.prowayflix.bd.FilmeDao;
+import br.com.prowayflix.bd.SerieDao;
+import br.com.prowayflix.bd.TemporadaDao;
 import br.com.prowayflix.interfaces.IMenu;
 import br.com.prowayflix.model.Categoria;
-import br.com.prowayflix.model.Filme;
+import br.com.prowayflix.model.Serie;
+import br.com.prowayflix.model.Temporada;
 
-public class FilmeMenu extends Menu implements IMenu {
+public class SerieMenu extends Menu implements IMenu {
 
-	static FilmeDao filmeDao = new FilmeDao();
+	static SerieDao serieDao = new SerieDao();
 	static CategoriaDao categoriaDao = new CategoriaDao();
-	static String titulo = "Filme";
+	static TemporadaDao temporadaDao = new TemporadaDao();
+	static String titulo = "Serie";
 
 	@Override
 	public void ExibirMenu() {
+
+		getOpcoes().add("5 - Temporadas");
 		do {
-			System.out.println("\n\n======= menu "+titulo+" ===============");
+			System.out.println("\n\n======= menu " + titulo + " ===============");
 			ListarOpcoes();
 			CapturarEscolha();
 			System.out.println("\n\n==============================");
@@ -38,31 +45,42 @@ public class FilmeMenu extends Menu implements IMenu {
 			System.out.println("Escolheu SAIR");
 			break;
 		case "1":
-			filmeDao.ReadAll(null);
+			serieDao.ReadAll(null);
 			break;
 		case "2":
 			System.out.println("Escolheu ADICIONAR");
-			Filme novo = (Filme) Cadastro("completo");
+			Serie novo = (Serie) Cadastro("completo");
 
 			if (Validar(novo, "completo")) {
-				filmeDao.Create(novo);
+				serieDao.Create(novo);
 			}
 			break;
 		case "3":
 			System.out.println("Escolheu EDITAR");
-			Filme original = (Filme) Cadastro("busca");
+			Serie original = (Serie) Cadastro("busca");
 			if (Validar(original, "busca")) {
-				Filme editado = (Filme) Cadastro("completo"); 
+				Serie editado = (Serie) Cadastro("completo");
 				if (Validar(editado, "completo")) {
-					filmeDao.Update(original, editado);
+					serieDao.Update(original, editado);
 				}
 			}
 			break;
 		case "4":
 			System.out.println("Escolheu DELETAR");
-			Filme deletar = (Filme) Cadastro("busca");
+			Serie deletar = (Serie) Cadastro("busca");
 			if (Validar(deletar, "busca")) {
-				filmeDao.Delete(deletar);
+				serieDao.Delete(deletar);
+			}
+			break;
+		case "5":
+			System.out.println("Escolheu TEMPORADAS");
+			Serie serie = (Serie) Cadastro("busca");
+			if (Validar(serie, "busca")) { 
+				Serie busca=(Serie) serieDao.Find(serie.getNome());
+				if(busca!=null)
+				new TemporadaMenu(busca).ExibirMenu();
+				else
+					System.out.println("nada encontrado");
 			}
 			break;
 		default:
@@ -73,7 +91,7 @@ public class FilmeMenu extends Menu implements IMenu {
 
 	@Override
 	public Object Cadastro(String tipo) {
-		Filme item = new Filme();
+		Serie item = new Serie();
 		System.out.println("=============================");
 		switch (tipo) {
 		case "completo":
@@ -105,7 +123,7 @@ public class FilmeMenu extends Menu implements IMenu {
 
 	@Override
 	public boolean Validar(Object objeto, String tipo) {
-		Filme item = (Filme) objeto;
+		Serie item = (Serie) objeto;
 		StringBuilder sbErros = new StringBuilder();
 		switch (tipo) {
 		case "completo":
@@ -120,9 +138,9 @@ public class FilmeMenu extends Menu implements IMenu {
 
 			if (item.getSinopse() == null || item.getSinopse().isEmpty() || item.getSinopse().isBlank())
 				sbErros.append("\nNome não pode ficar em branco");
-			if(item.getCategoria()==null)
+			if (item.getCategoria() == null)
 				sbErros.append("\nNão foi informada uma categoria valida.");
-			
+
 			break;
 		case "busca":
 			if (item.getNome().isEmpty() || item.getNome().isBlank())

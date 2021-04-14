@@ -17,10 +17,10 @@ public class PerfilDao extends Banco implements ICadastro {
 	public Object Create(Object novo) {
 		Perfil item = (Perfil) novo;
 		if (Find(item.getNome()) != null) {
-			System.out.println("Erro ao adicionar. Já existe registro com nome " + item.getNome());
+			System.out.println("Erro ao adicionar. Já existe registro com a chave " + item.getNome());
 		} else {
 			if(Executar(item, "INSERT INTO " + TABELA + " (nome) VALUES (?)")) {
-				item = (Perfil) Find(Limpar(item.getNome()));
+				item = (Perfil) Find(item.getNome());
 				item.ExibirDetalhes();
 				System.out.println("Salvo com sucesso!");
 			}   
@@ -56,20 +56,20 @@ public class PerfilDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Update(Object atual, Object editado) {
-		Perfil original = (Perfil) atual;
+		Perfil formulario = (Perfil) atual;
 		Perfil atualizado = (Perfil) editado;
-		original = (Perfil) Find(original.getNome());
+		Perfil original = (Perfil) Find(formulario.getNome());
 		if (original == null) {
-			System.out.println("Erro ao editar. Nada foi encontrado com nome " + original.getNome());
+			System.out.println("Erro ao editar. Nada foi encontrado com a chave " + formulario.getNome());
 		} else if (Find(atualizado.getNome()) != null) {
-			System.out.println("Erro ao editar. Já existe um registro com nome " + atualizado.getNome());
+			System.out.println("Erro ao editar. Já existe um registro com a chave " + atualizado.getNome());
 		} else {
 			System.out.println("====== EDITAR ========");
 			System.out.println("====== Antes ========");
 			original.ExibirDetalhes();
 			System.out.println("====== Depois ========");
 			
-			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? "+ " WHERE Nome='" + original.getNome() + "'")) {
+			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? "+ " WHERE lower(Nome)='" + original.getNome().toLowerCase() + "'")) {
 				original = (Perfil) Find(atualizado.getNome());
 				original.ExibirDetalhes();
 				System.out.println("Atualizado com sucesso!");
@@ -83,11 +83,11 @@ public class PerfilDao extends Banco implements ICadastro {
 		Perfil deletado = (Perfil) item;
 		Perfil busca = (Perfil) Find(deletado.getNome());
 		if (busca != null) {
-			Repositorio.ExecutarComandoBD("DELETE FROM " + TABELA + " WHERE nome='" + busca.getNome() + "'");
+			Repositorio.ExecutarComandoBD("DELETE FROM " + TABELA + " WHERE lower(nome)='" + busca.getNome().toLowerCase() + "'");
 			System.out.println("Item deletado com sucesso!");
 			return true;
 		} else {
-			System.out.println("Erro ao deletar. Nada foi encontrado com nome " + deletado.getNome());
+			System.out.println("Erro ao deletar. Nada foi encontrado com a chave " + deletado.getNome());
 			return false;
 		}
 	}
@@ -96,7 +96,7 @@ public class PerfilDao extends Banco implements ICadastro {
 	public Object Find(Object chave) {
 		String nome = (String) chave;
 		Perfil item = null;
-		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA + " WHERE Nome='" + nome + "'");
+		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA + " WHERE lower(Nome)='" + nome.toLowerCase() + "'");
 
 		try {
 			while (resultSet.next()) {

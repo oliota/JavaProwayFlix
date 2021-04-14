@@ -69,8 +69,11 @@ public class Filme implements IDetalhe {
 
 	@Override
 	public void ExibirDetalhes() {
-		System.out.println("Id: " + getIdFilme() + " Filme:"
-				+ getNome());
+		System.out.println("Id: " + getIdFilme() +
+				" Filme:" + getNome()+
+				" Ano:" + getAno()+
+				" Categoria:" + getCategoria().getNome()
+				);
 		
 	}
 

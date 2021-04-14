@@ -1,14 +1,13 @@
 package br.com.prowayflix.menu;
- 
 
-import br.com.prowayflix.bd.PerfilDao;
+import br.com.prowayflix.bd.CategoriaDao;
 import br.com.prowayflix.interfaces.IMenu;
-import br.com.prowayflix.model.Perfil;
+import br.com.prowayflix.model.Categoria;
 
-public class PerfilMenu extends Menu implements IMenu {
+public class CategoriaMenu extends Menu implements IMenu {
 
-	static PerfilDao perfilDao = new PerfilDao();
-	static String titulo = "Perfil";
+	static CategoriaDao categoriaDao = new CategoriaDao();
+	static String titulo = "Categoria";
 
 	@Override
 	public void ExibirMenu() {
@@ -36,30 +35,30 @@ public class PerfilMenu extends Menu implements IMenu {
 			System.out.println("Escolheu SAIR");
 			break;
 		case "1":
-			perfilDao.ReadAll(null);
+			categoriaDao.ReadAll(null);
 			break;
 		case "2":
 			System.out.println("Escolheu ADICIONAR");
-			Perfil novo = (Perfil) Cadastro("completo");
+			Categoria novo = (Categoria) Cadastro("completo");
 			if (Validar(novo, "completo")) {
-				perfilDao.Create(novo);
+				categoriaDao.Create(novo);
 			}
 			break;
 		case "3":
 			System.out.println("Escolheu EDITAR");
-			Perfil original = (Perfil) Cadastro("busca");
+			Categoria original = (Categoria) Cadastro("busca");
 			if (Validar(original, "busca")) {
-				Perfil editado = (Perfil) Cadastro("completo");
+				Categoria editado = (Categoria) Cadastro("completo");
 				if (Validar(editado, "completo")) {
-					perfilDao.Update(original, editado);
+					categoriaDao.Update(original, editado);
 				}
 			}
 			break;
 		case "4":
 			System.out.println("Escolheu DELETAR");
-			Perfil deletar = (Perfil) Cadastro("busca");
+			Categoria deletar = (Categoria) Cadastro("busca");
 			if (Validar(deletar, "busca")) {
-				perfilDao.Delete(deletar);
+				categoriaDao.Delete(deletar);
 			}
 			break;
 		default:
@@ -70,7 +69,7 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public Object Cadastro(String tipo) {
-		Perfil item = new Perfil(); 
+		Categoria item = new Categoria(); 
 		System.out.println("=============================");
 		switch (tipo) {
 		case "completo":
@@ -90,7 +89,7 @@ public class PerfilMenu extends Menu implements IMenu {
 
 	@Override
 	public boolean Validar(Object objeto, String tipo) {
-		Perfil item = (Perfil) objeto;
+		Categoria item = (Categoria) objeto;
 		StringBuilder sbErros = new StringBuilder();
 		switch (tipo) {
 		case "completo":
@@ -112,3 +111,4 @@ public class PerfilMenu extends Menu implements IMenu {
 	}
 
 }
+

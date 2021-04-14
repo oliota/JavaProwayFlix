@@ -2,7 +2,9 @@ package br.com.prowayflix.model;
 
 import java.util.ArrayList;
 
-public class Serie {
+import br.com.prowayflix.interfaces.IDetalhe;
+
+public class Serie implements IDetalhe{
 	private int IdSerie;
 	private Categoria Categoria;
 	private String Nome;
@@ -83,6 +85,14 @@ public class Serie {
 
 	public void setTemporadas(ArrayList<Temporada> temporadas) {
 		Temporadas = temporadas;
+	}
+	@Override
+	public void ExibirDetalhes() {
+		System.out.println("Id: " + getIdSerie() +
+				" Serie:" + getNome()+
+				" Ano:" + getAno()+
+				" Categoria:" + getCategoria().getNome()
+				);
 	}
 
 }
