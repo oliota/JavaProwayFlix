@@ -7,39 +7,40 @@ import java.util.ArrayList;
 
 import br.com.prowayflix.interfaces.ICadastro;
 import br.com.prowayflix.model.Categoria;
-import br.com.prowayflix.model.Filme;
-import br.com.prowayflix.model.Perfil;
+import br.com.prowayflix.model.Serie;
 
-public class CategoriaDao extends Banco implements ICadastro {
+public class SerieDao extends Banco implements ICadastro {
 
-	private final String TABELA = "Categoria";
+	private final String TABELA = "Serie";
 
 	@Override
 	public Object Create(Object novo) {
-		Categoria item = (Categoria) novo;
+		Serie item = (Serie) novo;
 		if (Find(item.getNome()) != null) {
-			System.out.println("Erro ao adicionar. Já existe registro com a chave " + item.getNome());
+			System.out.println("Erro ao adicionar. Já existe registro a chave " + item.getNome());
 		} else {
-			if(Executar(item, "INSERT INTO " + TABELA + " (nome) VALUES (?)")) {
-				item = (Categoria) Find(item.getNome());
+			if (Executar(item, "INSERT INTO " + TABELA + " (nome,ano,sinopse,categoriaid) VALUES (?,?,?,?)")) {
+				item = (Serie) Find(item.getNome());
 				item.ExibirDetalhes();
 				System.out.println("Salvo com sucesso!");
-			}   
+			}
 		}
 		return item;
 	}
 
 	@Override
 	public Object ReadAll(Object pai) {
-		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA);
+		ResultSet resultSet = Repositorio
+				.ConsultarBD("SELECT s.idSerie,s.nome Serie, s.ano,s.sinopse,c.idcategoria,c.nome categoria " + " from "
+						+ TABELA + " s " + " inner join Categoria c on c.idcategoria = s.categoriaid");
 
-		ArrayList<Categoria> lista = new ArrayList<>();
+		ArrayList<Serie> lista = new ArrayList<>();
 		try {
 			while (resultSet.next()) {
 				if (resultSet.isFirst()) {
 					System.out.println("\n\n====== Listar " + TABELA + " ========");
 				}
-				Categoria item = (Categoria) Preencher(resultSet);
+				Serie item = (Serie) Preencher(resultSet);
 				lista.add(item);
 				item.ExibirDetalhes();
 
@@ -57,34 +58,38 @@ public class CategoriaDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Update(Object atual, Object editado) {
-		Categoria formulario = (Categoria) atual;
-		Categoria atualizado = (Categoria) editado;
-		Categoria original = (Categoria) Find(formulario.getNome());
+		Serie formulario = (Serie) atual;
+		Serie atualizado = (Serie) editado;
+		Serie original = (Serie) Find(formulario.getNome());
 		if (original == null) {
 			System.out.println("Erro ao editar. Nada foi encontrado com a chave " + formulario.getNome());
 		} else if (Find(atualizado.getNome()) != null) {
 			System.out.println("Erro ao editar. Já existe um registro com a chave " + atualizado.getNome());
 		} else {
 			System.out.println("====== EDITAR ========");
+
 			System.out.println("====== Antes ========");
 			original.ExibirDetalhes();
 			System.out.println("====== Depois ========");
-			
-			if(Executar(atualizado, "UPDATE " + TABELA + " set nome=? "+ " WHERE lower(nome)='" + original.getNome().toLowerCase() + "'")) {
-				original = (Categoria) Find(atualizado.getNome());
+
+			if (Executar(atualizado, "UPDATE " + TABELA + " set nome=? , ano=?, sinopse=?, categoriaid=? "
+					+ " WHERE lower(nome)='" + original.getNome().toLowerCase() + "'")) {
+				original = (Serie) Find(atualizado.getNome());
 				original.ExibirDetalhes();
 				System.out.println("Atualizado com sucesso!");
-			}    
+			}
+
 		}
 		return original;
 	}
 
 	@Override
 	public boolean Delete(Object item) {
-		Categoria deletado = (Categoria) item;
-		Categoria busca = (Categoria) Find(deletado.getNome());
+		Serie deletado = (Serie) item;
+		Serie busca = (Serie) Find(deletado.getNome());
 		if (busca != null) {
-			Repositorio.ExecutarComandoBD("DELETE FROM " + TABELA + " WHERE lower(nome)='" + busca.getNome().toLowerCase() + "'");
+			Repositorio.ExecutarComandoBD(
+					"DELETE FROM " + TABELA + " WHERE lower(nome)='" + busca.getNome().toLowerCase() + "'");
 			System.out.println("Item deletado com sucesso!");
 			return true;
 		} else {
@@ -96,12 +101,15 @@ public class CategoriaDao extends Banco implements ICadastro {
 	@Override
 	public Object Find(Object chave) {
 		String nome = (String) chave;
-		Categoria item = null;
-		ResultSet resultSet = Repositorio.ConsultarBD("SELECT * from " + TABELA + " WHERE lower(nome)='" + nome.toLowerCase() + "'");
+		Serie item = null;
+		ResultSet resultSet = Repositorio
+				.ConsultarBD("SELECT s.idSerie,s.nome Serie, s.ano,s.sinopse,c.idcategoria,c.nome categoria" + " from "
+						+ TABELA + " s " + " inner join Categoria c on c.idcategoria = s.categoriaid"
+						+ " WHERE lower(s.nome)='" + nome.toLowerCase() + "'");
 
 		try {
 			while (resultSet.next()) {
-				item = (Categoria) Preencher(resultSet);
+				item = (Serie) Preencher(resultSet);
 				resultSet.isFirst();
 				break;
 			}
@@ -115,10 +123,16 @@ public class CategoriaDao extends Banco implements ICadastro {
 
 	@Override
 	public Object Preencher(ResultSet resultSet) {
-		Categoria item = new Categoria();
+		Serie item = new Serie();
+		item.setCategoria(new Categoria());
 		try {
-			item.setIdCategoria(resultSet.getInt(resultSet.findColumn("idcategoria")));
-			item.setNome(resultSet.getString(resultSet.findColumn("nome")));
+			item.setIdSerie(resultSet.getInt(resultSet.findColumn("idSerie")));
+			item.setNome(resultSet.getString(resultSet.findColumn("Serie")));
+			item.setAno(resultSet.getInt(resultSet.findColumn("ano")));
+			item.setSinopse(resultSet.getString(resultSet.findColumn("sinopse")));
+			item.getCategoria().setIdCategoria(resultSet.getInt(resultSet.findColumn("idcategoria")));
+			item.getCategoria().setNome(resultSet.getString(resultSet.findColumn("categoria")));
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -127,12 +141,16 @@ public class CategoriaDao extends Banco implements ICadastro {
 
 	@Override
 	public boolean Executar(Object objeto, String comando) {
-		Categoria item = (Categoria) objeto;
+
+		Serie item = (Serie) objeto;
 		try {
 			PreparedStatement preparedStmt;
 			preparedStmt = Repositorio.con.prepareStatement(comando);
-			preparedStmt.setString(1, item.getNome()); 
-			Repositorio.Executar(preparedStmt); 
+			preparedStmt.setString(1, item.getNome());
+			preparedStmt.setInt(2, item.getAno());
+			preparedStmt.setString(3, item.getSinopse());
+			preparedStmt.setInt(4, item.getCategoria().getIdCategoria());
+			Repositorio.Executar(preparedStmt);
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();

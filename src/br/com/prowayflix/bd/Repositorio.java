@@ -21,8 +21,20 @@ public class Repositorio {
 	public static ArrayList<Perfil> Perfis= new ArrayList<>();
 	
 	static public void ConectarBd(String drive) {
-
-		if (drive.equalsIgnoreCase("sqlserver")) {
+		
+		if (drive.equalsIgnoreCase("postgres")) {
+			String url = "jdbc:postgresql://localhost/"+banco;
+			Properties props = new Properties();
+			props.setProperty("user", "postgres");
+			props.setProperty("password", "postgres");
+			props.setProperty("ssl", "false");
+			try {
+				con = DriverManager.getConnection(url, props);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		/*if (drive.equalsIgnoreCase("sqlserver")) {
 			String connectionUrl = "jdbc:sqlserver://localhost:52718;databaseName="+banco+";";
 			String login = "admin";
 			String senha = "123";
@@ -43,19 +55,8 @@ public class Repositorio {
 				System.out.println("Erro ao conectar no banco de dados SQLSERVER, verifique a mensagem de erro acima");
 			}
 		}
+		*/
 		
-		if (drive.equalsIgnoreCase("postgres")) {
-			String url = "jdbc:postgresql://localhost/"+banco;
-			Properties props = new Properties();
-			props.setProperty("user", "postgres");
-			props.setProperty("password", "postgres");
-			props.setProperty("ssl", "false");
-			try {
-				con = DriverManager.getConnection(url, props);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	static public ResultSet ConsultarBD(String sql) {
