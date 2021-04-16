@@ -1,6 +1,8 @@
 package br.com.prowayflix.model;
 
-public class Episodio {
+import br.com.prowayflix.interfaces.IDetalhe;
+
+public class Episodio implements IDetalhe{
 	private int IdEpisodio;
 	private Temporada Temporada;
 	private int Sequencial;
@@ -62,6 +64,16 @@ public class Episodio {
 
 	public void setSinopse(String sinopse) {
 		Sinopse = sinopse;
+	}
+
+	@Override
+	public void ExibirDetalhes() {
+		System.out.println("Id: " + getIdEpisodio() +
+				" Episodio:" + getNome()+
+				" Sequencial:" + getSequencial()+
+				" Temporada:" + getTemporada().getSequencial()
+				);
+		
 	}
 
 }
