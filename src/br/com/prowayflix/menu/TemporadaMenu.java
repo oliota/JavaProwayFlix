@@ -1,11 +1,9 @@
 package br.com.prowayflix.menu;
 
-import br.com.prowayflix.bd.CategoriaDao;
-import br.com.prowayflix.bd.FilmeDao;
+import br.com.prowayflix.bd.CategoriaDao; 
 import br.com.prowayflix.bd.TemporadaDao;
 import br.com.prowayflix.interfaces.IMenu;
-import br.com.prowayflix.model.Categoria;
-import br.com.prowayflix.model.Filme;
+import br.com.prowayflix.model.Categoria; 
 import br.com.prowayflix.model.Serie;
 import br.com.prowayflix.model.Temporada;
 
@@ -25,6 +23,7 @@ public class TemporadaMenu extends Menu implements IMenu {
 
 	@Override
 	public void ExibirMenu() {
+		getOpcoes().add("5 - Episodios");
 		do {
 			System.out.println("\n\n======= menu "+titulo+" - Serie - "+pai.getNome()+"  ===============");
 			ListarOpcoes();
@@ -71,10 +70,23 @@ public class TemporadaMenu extends Menu implements IMenu {
 			break;
 		case "4":
 			System.out.println("Escolheu DELETAR");
-			Filme deletar = (Filme) Cadastro("busca");
+			Temporada deletar = (Temporada) Cadastro("busca");
 			if (Validar(deletar, "busca")) {
 				temporadaDao.Delete(deletar);
 			}
+			break;
+
+		case "5": {
+			System.out.println("Escolheu EPISODIOS");
+			Temporada serie = (Temporada) Cadastro("busca");
+			if (Validar(serie, "busca")) {
+				Temporada busca = (Temporada) temporadaDao.Find(serie.getSequencial());
+				if (busca != null)
+					new EpisodioMenu(busca).ExibirMenu();
+				else
+					System.out.println("nada encontrado");
+			}
+		}
 			break;
 		default:
 			System.out.println("Opção invalida");

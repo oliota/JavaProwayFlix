@@ -21,6 +21,7 @@ public class SerieMenu extends Menu implements IMenu {
 	public void ExibirMenu() {
 
 		getOpcoes().add("5 - Temporadas");
+		getOpcoes().add("6 - Ver Sinopse");
 		do {
 			System.out.println("\n\n======= menu " + titulo + " ===============");
 			ListarOpcoes();
@@ -72,16 +73,29 @@ public class SerieMenu extends Menu implements IMenu {
 				serieDao.Delete(deletar);
 			}
 			break;
-		case "5":
+		case "5": {
 			System.out.println("Escolheu TEMPORADAS");
 			Serie serie = (Serie) Cadastro("busca");
-			if (Validar(serie, "busca")) { 
-				Serie busca=(Serie) serieDao.Find(serie.getNome());
-				if(busca!=null)
-				new TemporadaMenu(busca).ExibirMenu();
+			if (Validar(serie, "busca")) {
+				Serie busca = (Serie) serieDao.Find(serie.getNome());
+				if (busca != null)
+					new TemporadaMenu(busca).ExibirMenu();
 				else
 					System.out.println("nada encontrado");
 			}
+		}
+			break;
+		case "6": {
+			System.out.println("Escolheu VER SINOPSE");
+			Serie serie = (Serie) Cadastro("busca");
+			if (Validar(serie, "busca")) {
+				Serie busca = (Serie) serieDao.Find(serie.getNome());
+				if (busca != null)
+					System.out.println("Sinopse da serie ["+busca.getNome()+"] :"+busca.getSinopse());
+				else
+					System.out.println("nada encontrado");
+			}
+		}
 			break;
 		default:
 			System.out.println("Opção invalida");
